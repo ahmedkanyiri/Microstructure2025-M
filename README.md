@@ -21,4 +21,6 @@ This repo is created for CONNExIn Microstructure 2025 (M) team week 1 assignment
    
 4. - **Name:** Claudia Takyi Ankomah
    - **Affiliation:** Kwame Nkrumah University of Science and Technology, Kumasi - Ghana
-   
+
+5. - **Name:** Lord Boateng Amponsah
+   - **Affiliation:** University of Cape Coast, Cape Coast - Ghana

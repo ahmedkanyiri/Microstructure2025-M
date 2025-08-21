@@ -6,15 +6,14 @@ This repo is created for CONNExIn Microstructure 2025 (M) week 1 team assignment
 ## Team Details
 
 ### Team Lead:
-
 - **Name:** Ahmed Kanyiri Yakubu.
 - **Affiliation:** Komfo Anokye Teaching Hospital, Kumasi - Ghana.
 
-### Team Members:
-- **Name:** Nana Yaa Doku-Amponsah.
-- **Affiliation:** University of Ghana, Accra - Ghana.
+### Team MeMembers
+1. - **Name:** Nana Yaa Doku-Amponsah.
+   - **Affiliation:** University of Ghana, Accra - Ghana.
 
-- **Name:** Seth Kyei Kwabena Kukudabi
-- **Affiliation:** University for Development Studies, Tamale - Ghana.
+2. - **Name:** Seth Kyei Kwabena Kukudabi
+   - **Affiliation:** University for Development Studies, Tamale - Ghana.
 
 

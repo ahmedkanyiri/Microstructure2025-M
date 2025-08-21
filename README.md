@@ -11,3 +11,7 @@ This repo is created for CONNExIn Microstructure 2025 (M) week 1 team assignment
 - **Affiliation:** Komfo Anokye Teaching Hospital, Kumasi - Ghana.
 
 ### Team Members:
+- **Name:** Nana Yaa Doku-Amponsah.
+- **Affiliation:** University of Ghana, Accra - Ghana.
+
+

@@ -17,4 +17,4 @@ This repo is created for CONNExIn Microstructure 2025 (M) team week 1 assignment
    - **Affiliation:** University for Development Studies, Tamale - Ghana.
 
 3. -**Name:** Jeffrey Gameli Amlalo
-   - **Affiliation:** University of Cape Coast, Cape Coast - Ghana
+   -**Affiliation:** University of Cape Coast, Cape Coast - Ghana

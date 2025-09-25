@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-# Load modules (adjust to your environment)
+# Load modules 
 ml mrtrix3/3.0.4
 ml fsl/6.0.7.16
 

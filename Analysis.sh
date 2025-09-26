@@ -26,11 +26,14 @@ run_dtifit() {
 
 run_tbss(){
     print_green "Running TBSS"
+
+    cd "$1" 
+
     print_green "Running TBSS - step 1"
     tbss_1_preproc "$1".nii.gz
 
     print_green "Running TBSS - step 2"
-    tbss_2_reg -T
+    tbss_2_reg -T 
 
     print_green "Running TBSS - step 3"
     tbss_3_postreg -S
@@ -39,17 +42,52 @@ run_tbss(){
     tbss_4_prestats 0.2
 
     cd stats
-    Glm 
 
-    randomise -i $ALL_FA_SKELETONISED -o $TBSS -m $MEAN_FA_SKELETON_MASK -d $DESIGN.mat -t $DESIGN.con -c 1.5
+    subj_count=$(ls ../FA/*_FA_FA.nii.gz 2>/dev/null | wc -l)
 
-    fslmaths $TBSS_TFCE_CORRP_TSTAT1 -thr 0.95 $SIG_TSTAT1
+    if [ "$subj_count" -gt 1 ]; then
 
-    echo Subject, Mean_FA > $TBSS_RESULTS.csv
-    for subj in *_FA_SKELETONISED.nii.gz; do
-        meanval=$(fslstats $subj -k $SIG_TSTAT1 -M)
-        echo $(basename $subj .nii.gz),$meanval >>$TBSS_RESULTS.csv
-    done
+        print_green "Detected $subj_count subjects -> running GLM + randomise"
+
+        if [ ! -f design.mat ] || [ ! -f design.con ]; then
+            print_red "No design.mat / design.con found. Create them before running group stats."
+            exit 1
+        fi
+
+        randomise -i all_FA_skeletonised -o tbss -m mean_FA_skeleton_mask \
+                  -d design.mat -t design.con -n 500 -T
+
+        fslmaths tbss_tfce_corrp_tstat1 -thr 0.95 sig_tstat1
+
+        echo Subject,Mean_FA > tbss_results.csv
+        for subj in *_FA_skeletonised.nii.gz; do
+            meanval=$(fslstats $subj -k sig_tstat1 -M)
+            echo "$(basename $subj .nii.gz),$meanval" >> tbss_results.csv
+        done
+
+    else
+        print_yellow "Only one subject found -> skipping GLM/randomise"
+
+        echo Subject,Mean_FA,Mean_MD > tbss_results.csv
+        subj=$(ls *_FA_skeletonised.nii.gz | head -n 1)
+
+        if [ -n "$subj" ]; then
+            mean_fa=$(fslstats "$subj" -M)
+        else
+            mean_fa="NA"
+        fi
+
+        subj_md=$(echo "$subj" | sed 's/_FA_/_MD_/')
+        if [ -f "$subj_md" ]; then
+            mean_md=$(fslstats "$subj_md" -M)
+        else
+            mean_md="NA"
+        fi
+
+        echo "$(basename $subj .nii.gz),$mean_fa,$mean_md" >> tbss_results.csv
+    fi
+
+    print_green "TBSS completed"
 }
 
 find_files() {
@@ -95,6 +133,7 @@ if ls "$fsl_dir"/* >/dev/null 2>&1; then
 
         subject_num=$(basename "$subject" | grep -oE "sub-[0-9]+")
 
+
         if [[ $bvecs == *AP* ]]; then
             bvals=$(find_files "$mrtrix_dir/$subject_num" "*AP_dwi_checked.bval" "bvals")
         elif [[ $bvecs == *PA* ]]; then
@@ -104,15 +143,21 @@ if ls "$fsl_dir"/* >/dev/null 2>&1; then
             continue
         fi
 
-        dti_out="${subject_num}_dti"
+        subject_dir="$tbss_dir/$subject_num"
+        mkdir -p "$subject_dir"
+        dti_out="$subject_dir/${subject_num}_dti"
 
         print_green "Loading FSL module - version 6.0.7.16"
-        ml fsl/6.0.7.16
+        ml fsl
 
         echo "$bvals"
         echo "$bvecs"
 
         run_dtifit "$brain" "$mask" "$dti_out" "$bvecs" "$bvals"
+
+        # cd "$subject_dir/"
+        # echo pwd: "$(pwd)"
+        run_tbss "$subject_dir/" "$dti_out"
     done
 else
     print_red "No files in fsl dir... run the preprocessing script before running analysis"

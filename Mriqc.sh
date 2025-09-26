@@ -5,7 +5,7 @@
 #   ./mriqc_steps.sh /path/to/raw /path/to/derivatives
 #
 # Example:
-#   ./mriqc_steps.sh ~/Desktop/Microstructure_M/raw ~/Desktop/Microstructure_M/derivatives
+#   ./mriqc_steps.sh ~/path/to/raw ~/path/to/derivatives
 #
 # Outputs:
 #   - Participant-level QC reports (HTML/JSON/TSV)

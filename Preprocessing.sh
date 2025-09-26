@@ -49,7 +49,7 @@ run_topup() {
   B0_MERGED="$subj_fsl_dir/b0_merged.nii.gz"
   ACQ="$subj_fsl_dir/acqparams.txt"
   TOPUP_PREFIX="$subj_fsl_dir/topup_AP_PA_b0"
-  TOPUP_CORR_BASE="$subj_fsl_dir/topup_corrected_b0"
+  TOPUP_CORR_BASE="$subj_fsl_dir/topup_AP_PA_b0_iout"
 
   echo "    extracting B0s"
   fslroi "$degibbs_ap" "$B0_AP" 0 1
@@ -61,10 +61,14 @@ run_topup() {
   printf "0 1 0 0.05\n0 -1 0 0.05\n" > "$ACQ"
 
   echo "    running topup -> prefix: $TOPUP_PREFIX"
-  topup --imain="$B0_MERGED" --datain="$ACQ" --config=b02b0_1.cnf --out="$TOPUP_PREFIX" --iout="$TOPUP_CORR_BASE"
+  topup --imain="$B0_MERGED" --datain="$ACQ" --config=b02b0_1.cnf \
+        --out="$TOPUP_PREFIX" --iout="$TOPUP_CORR_BASE"
 
-  echo "    BET on topup-corrected B0 to create mask"
-  bet "${TOPUP_CORR_BASE}.nii.gz" "${subj_fsl_dir}/b0_brain" -m -f 0.3
+  echo "    averaging topup-corrected B0s"
+  fslmaths "$TOPUP_CORR_BASE" -Tmean "$subj_fsl_dir/hifi_nodif"
+
+  echo "    BET on averaged B0 to create mask"
+  bet "$subj_fsl_dir/hifi_nodif" "$subj_fsl_dir/hifi_nodif_brain" -m -f 0.2
 }
 
 run_eddy_cpu_ap_with_topup() {
@@ -87,7 +91,7 @@ run_eddy_cpu_ap_with_topup() {
   echo "    running eddy_cpu on AP-only using TOPUP results"
   eddy_cpu \
     --imain="$degibbs_ap" \
-    --mask="${subj_fsl_dir}/b0_brain_mask.nii.gz" \
+    --mask="${subj_fsl_dir}/hifi_nodif_brain_mask.nii.gz" \
     --acqp="$subj_fsl_dir/acqparams.txt" \
     --index="$subj_fsl_dir/index.txt" \
     --bvecs="$bvec_ap" \
@@ -210,7 +214,7 @@ for subj_path in "$raw_dir"/sub-*; do
     eddy_img="$subj_fsl_dir/${subj}_AP_eddy.nii.gz"
     if [ -f "$eddy_img" ]; then
         echo "  Running final BET on eddy output"
-        bet "$eddy_img" "$subj_fsl_dir/${subj}_AP_eddy_brain" -m -f 0.3
+        bet "$eddy_img" "$subj_fsl_dir/${subj}_AP_eddy_brain" -m -F
     else
         echo "ERROR: EDDY output not found at $eddy_img"
         exit 1

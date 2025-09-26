@@ -8,7 +8,7 @@ This repository contains a collection of scripts developed by Team Microstructur
 
 -**Preprocessing** [ *Preprocessing.sh* ]: Implements preprocessing steps (e.g., eddy-current correction, brain extraction,denoising, gibbs ring removal and gradient compatibility checks) necessary to prepare diffusion MRI data for TBSS analysis.
 
--**Analysis**: Executes TBSS analysis to assess changes in white matter microstructural integrity in subjects with Alzheimer’s dementia.
+-**Analysis** [ *run_pipeline.sh* ]: Executes TBSS analysis to assess changes in white matter microstructural integrity in subjects with Alzheimer’s dementia.
 
 ## Team Details
 

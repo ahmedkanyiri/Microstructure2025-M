@@ -30,7 +30,7 @@ run_tbss(){
     cd "$1" 
 
     print_green "Running TBSS - step 1"
-    tbss_1_preproc "$1".nii.gz
+    tbss_1_preproc *FA.nii.gz
 
     print_green "Running TBSS - step 2"
     tbss_2_reg -T 
@@ -68,7 +68,9 @@ run_tbss(){
     else
         print_yellow "Only one subject found -> skipping GLM/randomise"
 
-        echo Subject,Mean_FA,Mean_MD > tbss_results.csv
+        print_green "Creasting TBSS_RESULTS.csv"
+
+        echo Subject,Mean_FA,Mean_MD > TBSS_RESULTS.csv
         subj=$(ls *_FA_skeletonised.nii.gz | head -n 1)
 
         if [ -n "$subj" ]; then
@@ -153,8 +155,6 @@ if ls "$fsl_dir"/* >/dev/null 2>&1; then
 
         run_dtifit "$brain" "$mask" "$dti_out" "$bvecs" "$bvals"
 
-        # cd "$subject_dir/"
-        # echo pwd: "$(pwd)"
         run_tbss "$subject_dir/" "$dti_out"
     done
 else

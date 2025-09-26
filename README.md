@@ -28,6 +28,3 @@ This repository contains a collection of scripts developed by Team Microstructur
    
 4. - **Name:** Claudia Takyi Ankomah
    - **Affiliation:** Kwame Nkrumah University of Science and Technology, Kumasi - Ghana
-
-5. - **Name:** Lord Boateng Amponsah
-   - **Affiliation:** University of Cape Coast, Cape Coast - Ghana

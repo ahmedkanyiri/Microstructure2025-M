@@ -93,12 +93,10 @@ run_tbss(){
 find_files() {
     local base_dir=$1
     local pattern=$2
-    local file_name=$3
 
     for file in "$base_dir"/*; do 
         match=$(find "$file" -type f -name "$pattern" 2>/dev/null || true)
         if [ -n "$match" ]; then
-            # print_green "Found $file_name"
             echo "$match"
         fi
     done
@@ -127,17 +125,17 @@ if ls "$fsl_dir"/* >/dev/null 2>&1; then
     print_green "Preparing to run DTIFIT"
 
     for subject in "$fsl_dir"/*; do
-        brain=$(find_files "$subject" "*eddy_brain.nii.gz" "brain file")
-        mask=$(find_files "$subject" "*eddy_brain_mask.nii.gz" "mask file")
-        bvecs=$(find_files "$subject" "*.eddy_rotated_bvecs*" "bvecs")
+        brain=$(find_files "$subject" "*eddy_brain.nii.gz")
+        mask=$(find_files "$subject" "*eddy_brain_mask.nii.gz")
+        bvecs=$(find_files "$subject" "*.eddy_rotated_bvecs*")
 
         subject_num=$(basename "$subject" | grep -oE "sub-[0-9]+")
 
 
         if [[ $bvecs == *AP* ]]; then
-            bvals=$(find_files "$mrtrix_dir/$subject_num" "*AP_dwi_checked.bval" "bvals")
+            bvals=$(find_files "$mrtrix_dir/$subject_num" "*AP_dwi_checked.bval")
         elif [[ $bvecs == *PA* ]]; then
-            bvals=$(find_files "$mrtrix_dir/$subject_num" "*PA_dwi_checked.bval" "bvals")
+            bvals=$(find_files "$mrtrix_dir/$subject_num" "*PA_dwi_checked.bval")
         else
             print_red "Could not determine bvals type for $subject_num"
             continue

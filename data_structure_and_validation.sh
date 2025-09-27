@@ -9,7 +9,6 @@
 # Or inline when running the script:
 # MICROSTRUCTURE_M=/path/to/project ORIG_DATA=/path/to/orig_or_zip_parent ./data_structure_and_validation.sh
 
-
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -27,6 +26,8 @@ RAW="raw"
 DERIVATIVES="derivatives"
 CODE="code"
 REQ_BIDSCOIN_VER="4.6.2"
+
+SUB_LIST="${MICROSTRUCTURE_M}/sub_list"
 
 # --- Functions ---
 create_dirs() {
@@ -54,8 +55,14 @@ populate_source() {
     done
 
     popd >/dev/null
-    print_yellow "Subjects found:"
-    find "$MICROSTRUCTURE_M/$SOURCE" -maxdepth 2 -type d -name "sub-*" || true
+
+    if [ -f "$SUB_LIST" ]; then
+        print_yellow "Subjects loaded from sub_list:"
+        cat "$SUB_LIST"
+    else
+        print_yellow "Subjects found in source:"
+        find "$MICROSTRUCTURE_M/$SOURCE" -maxdepth 2 -type d -name "sub-*" || true
+    fi
 }
 
 load_bidscoin() {
@@ -104,9 +111,16 @@ copy_existing_dwi() {
     local raw="$MICROSTRUCTURE_M/$RAW"
 
     print_green "Copying pre-converted DWI files"
-    for subjdir in "$raw"/sub-*; do
+
+    if [ -f "$SUB_LIST" ]; then
+        subjects=$(cat "$SUB_LIST")
+    else
+        subjects=$(ls -d "$raw"/sub-* 2>/dev/null | xargs -n1 basename || true)
+    fi
+
+    for subj in $subjects; do
+        subjdir="$raw/$subj"
         [ -d "$subjdir" ] || continue
-        subj=$(basename "$subjdir")
 
         src_dwi=$(find "$src" -maxdepth 2 -type d -name "${subj}_S_*" -exec find {} -type d -name dwi \; | head -n1)
         [ -d "$src_dwi" ] || continue
@@ -183,4 +197,3 @@ run_bids_validator
 show_tree
 
 print_green "Pipeline finished"
-

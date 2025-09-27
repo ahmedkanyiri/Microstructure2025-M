@@ -1,4 +1,15 @@
 #!/bin/bash
+
+# Usage:
+# Set environment variables by exporting them before running the script:
+#   export MICROSTRUCTURE_M=/path/to/project
+#   export ORIG_DATA=/path/to/orig_or_zip_parent
+#   ./data_structure_and_validation.sh
+
+# Or inline when running the script:
+# MICROSTRUCTURE_M=/path/to/project ORIG_DATA=/path/to/orig_or_zip_parent ./data_structure_and_validation.sh
+
+
 set -euo pipefail
 IFS=$'\n\t'
 

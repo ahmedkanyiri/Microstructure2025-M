@@ -171,6 +171,10 @@ run_bidscoiner() {
     warn "bidscoiner executable not found. If you have only the NeuroDesk GUI, run conversion there or make bidscoiner available in PATH."
   fi
 
+  # Temporal fix to copy dwi files into raw folder
+  for file in "$SOURCE"/*/*dwi*; do
+    cp "$file" "$raw/"
+  done
   info "After bidscoiner run, check that $raw contains subject sub-* folders with anat/ and dwi/ etc."
   find "$raw" -maxdepth 2 -type d -name "sub-*" -print || true
 }

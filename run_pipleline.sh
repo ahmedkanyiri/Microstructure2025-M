@@ -13,7 +13,7 @@ chmod +x Preprocessing.sh
 chmod +x Analysis.sh
 
 raw_dir="$MICROSTRUCTURE_M"/raw
-deriv_dir="$ORIG_DATA"/derivatives
+deriv_dir="$MICROSTRUCTURE_M"/derivatives
 
 print_yellow "Running Data Structure and Validating Data"
 ./data_structure_and_validation.sh
@@ -25,6 +25,6 @@ print_yellow "Running Preprocessing"
 ./Preprocessing.sh "$raw_dir" "$deriv_dir"
 
 print_yellow "Running Analysis"
-./Analysis.sh "$deriv_dir"
+./Analysis.sh "$deriv_dir"/
 
 print_yellow "Pipeline Completed Successfully"

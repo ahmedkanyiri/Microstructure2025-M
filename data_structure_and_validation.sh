@@ -128,11 +128,11 @@ copy_existing_dwi() {
         target="$subjdir/dwi"
         mkdir -p "$target"
 
-        for dir in AP PA; do
-            nifti=$(find "$src_dwi" -maxdepth 1 -type f -name "*_${dir}_dwi.nii" | head -n1)
+        for acq in AP PA; do
+            nifti=$(find "$src_dwi" -maxdepth 1 -type f -name "*_${acq}_dwi.nii" | head -n1)
             if [ -n "$nifti" ]; then
-                base="${subj}_dir-${dir}_dwi"
-                print_yellow "Copying $dir DWI for $subj"
+                base="${subj}_dir-${acq}_dwi"
+                print_yellow "Copying $acq DWI for $subj"
                 for ext in nii bval bvec json; do
                     fsrc="${nifti%.nii}.$ext"
                     [ -f "$fsrc" ] && cp "$fsrc" "$target/${base}.$ext"

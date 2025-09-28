@@ -27,7 +27,7 @@ run_dtifit() {
 run_tbss(){
     print_green "Running TBSS"
 
-    cd "$1" 
+    cd "$1" || exit 1
 
     print_green "Running TBSS - step 1"
     tbss_1_preproc *FA.nii.gz
@@ -41,12 +41,15 @@ run_tbss(){
     print_green "Running TBSS - step 4"
     tbss_4_prestats 0.2
 
-    cd stats
+
+    print_green "Running TBSS non-FA for MD"
+    tbss_non_FA MD
+
+    cd stats || exit 1
 
     subj_count=$(ls ../FA/*_FA_FA.nii.gz 2>/dev/null | wc -l)
 
     if [ "$subj_count" -gt 1 ]; then
-
         print_green "Detected $subj_count subjects -> running GLM + randomise"
 
         if [ ! -f design.mat ] || [ ! -f design.con ]; then
@@ -59,34 +62,44 @@ run_tbss(){
 
         fslmaths tbss_tfce_corrp_tstat1 -thr 0.95 sig_tstat1
 
-        echo Subject,Mean_FA > tbss_results.csv
-        for subj in *_FA_skeletonised.nii.gz; do
-            meanval=$(fslstats $subj -k sig_tstat1 -M)
-            echo "$(basename $subj .nii.gz),$meanval" >> tbss_results.csv
+        echo Subject,Mean_FA,Mean_MD > tbss_results.csv
+        for fa in *_FA_skeletonised.nii.gz; do
+            subj=$(basename "$fa" _FA_skeletonised.nii.gz)
+            md="${subj}_MD_skeletonised.nii.gz"
+
+            mean_fa=$(fslstats "$fa" -k mean_FA_skeleton_mask -M 2>/dev/null || echo "NA")
+            if [ -f "$md" ]; then
+                mean_md=$(fslstats "$md" -k mean_FA_skeleton_mask -M 2>/dev/null || echo "NA")
+            else
+                mean_md="NA"
+            fi
+
+            echo "$subj,$mean_fa,$mean_md" >> tbss_results.csv
         done
 
     else
         print_yellow "Only one subject found -> skipping GLM/randomise"
 
-        print_green "Creasting TBSS_RESULTS.csv"
+        results="TBSS_RESULTS.csv"
+        echo Subject,Mean_FA,Mean_MD > $results
 
-        echo Subject,Mean_FA,Mean_MD > TBSS_RESULTS.csv
-        subj=$(ls *_FA_skeletonised.nii.gz | head -n 1)
-
-        if [ -n "$subj" ]; then
-            mean_fa=$(fslstats "$subj" -M)
+        fa=$(ls *_FA_skeletonised.nii.gz 2>/dev/null | head -n1)
+        if [ -n "$fa" ]; then
+            subj=$(basename "$fa" _FA_skeletonised.nii.gz)
+            mean_fa=$(fslstats "$fa" -k mean_FA_skeleton_mask -M)
         else
+            subj="NA"
             mean_fa="NA"
         fi
 
-        subj_md=$(echo "$subj" | sed 's/_FA_/_MD_/')
-        if [ -f "$subj_md" ]; then
-            mean_md=$(fslstats "$subj_md" -M)
+        md="${subj}_MD_skeletonised.nii.gz"
+        if [ -f "$md" ]; then
+            mean_md=$(fslstats "$md" -k mean_FA_skeleton_mask -M)
         else
             mean_md="NA"
         fi
 
-        echo "$(basename $subj .nii.gz),$mean_fa,$mean_md" >> tbss_results.csv
+        echo "$subj,$mean_fa,$mean_md" >> $results
     fi
 
     print_green "TBSS completed"
@@ -131,7 +144,7 @@ if ls "$fsl_dir"/* >/dev/null 2>&1; then
         mask=$(find_files "$subject" "*eddy_brain_mask.nii.gz")
         bvecs=$(find_files "$subject" "*.eddy_rotated_bvecs*")
 
-        subject_num=$(basename "$subject" | grep -oE "sub-[0-9]+")
+        subject_num=$(basename "$subject" | grep -oE "sub-[A-Za-z0-9]+")
 
 
         if [[ $bvecs == *AP* ]]; then

@@ -115,32 +115,53 @@ copy_existing_dwi() {
     if [ -f "$SUB_LIST" ]; then
         subjects=$(cat "$SUB_LIST")
     else
-        subjects=$(ls -d "$raw"/sub-* 2>/dev/null | xargs -n1 basename || true)
+        subjects=$(find "$raw" -maxdepth 1 -type d -name "sub-*" -print0 2>/dev/null | xargs -0 -n1 basename || true)
     fi
 
     for subj in $subjects; do
         subjdir="$raw/$subj"
         [ -d "$subjdir" ] || continue
 
-        src_dwi=$(find "$src" -maxdepth 2 -type d -name "${subj}_S_*" -exec find {} -type d -name dwi \; | head -n1)
-        [ -d "$src_dwi" ] || continue
+        src_pattern="${subj/S/_S_}"
+        src_dwi=$(find "$src" -maxdepth 2 -type d -name "${src_pattern}" -exec find {} -type d -name dwi \; | head -n1)
+        if [ -z "$src_dwi" ] || [ ! -d "$src_dwi" ]; then
+            print_yellow "  No DWI folder found for $subj"
+            continue
+        fi
 
         target="$subjdir/dwi"
         mkdir -p "$target"
 
         for acq in AP PA; do
-            nifti=$(find "$src_dwi" -maxdepth 1 -type f -name "*_${acq}_dwi.nii" | head -n1)
-            if [ -n "$nifti" ]; then
-                base="${subj}_dir-${acq}_dwi"
-                print_yellow "Copying $acq DWI for $subj"
-                for ext in nii bval bvec json; do
-                    fsrc="${nifti%.nii}.$ext"
-                    [ -f "$fsrc" ] && cp "$fsrc" "$target/${base}.$ext"
-                done
+            nifti=$(find "$src_dwi" -maxdepth 1 -type f -name "*_${acq}_dwi.nii*" | head -n1)
+            if [ -z "$nifti" ]; then
+                print_yellow "  No ${acq} DWI found for $subj"
+                continue
             fi
+
+            if [[ "$nifti" == *.nii.gz ]]; then
+                base_src="${nifti%.nii.gz}"
+                nii_ext="nii.gz"
+            else
+                base_src="${nifti%.nii}"
+                nii_ext="nii"
+            fi
+
+            base="${subj}_dir-${acq}_dwi"
+            print_yellow "  Copying ${acq} DWI for $subj -> $target/${base}.*"
+
+            for ext in "$nii_ext" bval bvec json; do
+                fsrc="${base_src}.$ext"
+                if [ -f "$fsrc" ]; then
+                    cp -v "$fsrc" "$target/${base}.$ext"
+                else
+                    print_yellow "    Missing: $fsrc"
+                fi
+            done
         done
     done
 }
+
 
 add_bidsignore() {
     local raw="$MICROSTRUCTURE_M/$RAW"
@@ -196,4 +217,4 @@ write_dataset_description
 run_bids_validator
 show_tree
 
-print_green "Pipeline finished"
+print_green "Data Structure and Validation complete"

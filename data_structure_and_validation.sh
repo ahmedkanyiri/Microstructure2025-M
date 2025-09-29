@@ -122,8 +122,7 @@ copy_existing_dwi() {
         subjdir="$raw/$subj"
         [ -d "$subjdir" ] || continue
 
-        src_pattern="${subj/S/_S_}"
-        src_dwi=$(find "$src" -maxdepth 2 -type d -name "${src_pattern}" -exec find {} -type d -name dwi \; | head -n1)
+        src_dwi=$(find "$src" -maxdepth 2 -type d -name "${subj}" -exec find {} -type d -name dwi \; | head -n1)
         if [ -z "$src_dwi" ] || [ ! -d "$src_dwi" ]; then
             print_yellow "  No DWI folder found for $subj"
             continue

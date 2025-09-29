@@ -187,7 +187,7 @@ run_bids_validator() {
     local raw="$MICROSTRUCTURE_M/$RAW"
     if command -v deno >/dev/null; then
         print_green "Running BIDS validator (ignoring warnings, verbose mode)"
-        deno run -ERWN jsr:@bids/validator "$raw" --ignoreWarnings || print_yellow "Validator issues found"
+        deno run -ERWN jsr:@bids/validator "$raw" --ignoreWarnings --verbose || print_yellow "Validator issues found"
     else
         print_yellow "deno not found, skipping validation"
     fi

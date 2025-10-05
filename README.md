@@ -13,47 +13,52 @@ This repository contains a collection of scripts developed by Team Microstructur
 -**Combined** [ *run_pipeline.sh* ]: Executes the whole pipeline
 
 ## Sripts Usage
-- There are two ways to use the scripts, first run the scripts individually, or run them all together using run_pipeline.sh. Before using either method, create the following environment variables in your bash terminal
-  * `PROJECT_ROOT` -> Root folder name
-  * `ORIG_DATA`  -> Original dataset archive
 
- ```bash
- $ export PROJECT_ROOT=/home/joyvan/Microstructure_M
- $ export ORIG_DATA=/home/joyvan/path/to/archive
+> [!Note]
+> Make sure all scripts are executable before running
+```bash
+chmod +x *.sh
+```
+
+- There are two ways to use the scripts, first run the scripts individually, or run them all together using run_pipeline.sh. Before using either method, create the following environment variables in your bash terminal
+ * `PROJECT_ROOT` -> Root folder name
+ * `ORIG_DATA`  -> Original dataset archive
+
+```bash
+$ export PROJECT_ROOT=/home/joyvan/Microstructure_M
+$ export ORIG_DATA=/home/joyvan/path/to/archive
+```
+- ### Individual scripts method
+You have to run the scripts in this order
+ + Step 1: Create the data structure and validate it using the BIDS validator
+```bash
+# Takes no arguments
+./data_structure_and_validation.sh
+```
+ + Step 2: Run MRIQC for quality control
+```bash
+# Takes 2 positional arguments: raw and derivatives directories
+./Mriqc.sh path/to/raw path/to/derivatives
  ```
- - ### Individual scripts method
- You have to run the scripts in this order
-  + Step 1: Create the data structure and validate it using the BIDS validator
- ```bash
- # Takes no arguments
- ./data_structure_and_validation.sh
+ + Step 3: Run preprocessing
+```bash
+# Takes 2 positional arguments: raw and derivatives directories
+./Preprocessing.sh path/to/raw path/to/derivatives
  ```
-  + Step 2: Run MRIQC for quality control
- ```bash
- # Takes 2 positional arguments: raw and derivatives directories
- ./Mriqc.sh path/to/raw path/to/derivatives
-  ```
-  + Step 3: Run preprocessing
- ```bash
- # Takes 2 positional arguments: raw and derivatives directories
- ./Preprocessing.sh path/to/raw path/to/derivatives
-  ```
-  + Step 4: Run analysis
- ```bash
- # Takes 1 positional argument: derivatives directory
- ./Analysis.sh path/to/derivatives
-  ```
- 
- ### Combined Method
- ```bash
- # Takes no arguments
- ./run_pipeline.sh
+ + Step 4: Run analysis
+```bash
+# Takes 1 positional argument: derivatives directory
+./Analysis.sh path/to/derivatives
  ```
- > [!Note]
- > Make sure all scripts are executable before running
- ```bash
- chmod +x *.sh
- ```
+
+### Combined Method
+```bash
+# Takes no arguments
+./run_pipeline.sh
+```
+
+> [!TIP]
+> Refer to the main [pipeline](https://www.protocols.io/edit/bids-compliant-workflow-for-data-organization-qual-g8hybzt7x) on protocols.io for more details
 
 ## Team Details
 
@@ -65,11 +70,11 @@ This repository contains a collection of scripts developed by Team Microstructur
 1. - **Name:** Nana Yaa Doku-Amponsah.
    - **Affiliation:** University of Ghana, Accra - Ghana.
 
-2. - **Name:** Seth Kyei Kwabena Kukudabi
-   - **Affiliation:** University for Development Studies, Tamale - Ghana.
+2. * **Name:** Seth Kyei Kwabena Kukudabi
+   * **Affiliation:** University for Development Studies, Tamale - Ghana.
   
 3. - **Name:** Jeffrey Gameli Amlalo
    - **Affiliation:** University of Cape Coast, Cape Coast - Ghana
    
-4. - **Name:** Claudia Takyi Ankomah
-   - **Affiliation:** Kwame Nkrumah University of Science and Technology, Kumasi - Ghana
+4. + **Name:** Claudia Takyi Ankomah
+   + **Affiliation:** Kwame Nkrumah University of Science and Technology, Kumasi - Ghana

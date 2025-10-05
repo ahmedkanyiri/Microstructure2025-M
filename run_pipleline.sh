@@ -12,8 +12,8 @@ chmod +x Mriqc.sh
 chmod +x Preprocessing.sh
 chmod +x Analysis.sh
 
-raw_dir="$MICROSTRUCTURE_M"/raw
-deriv_dir="$MICROSTRUCTURE_M"/derivatives
+raw_dir="$PROJECT_ROOT"/raw
+deriv_dir="$PROJECT_ROOT"/derivatives
 
 print_yellow "Running Data Structure and Validating Data"
 ./data_structure_and_validation.sh

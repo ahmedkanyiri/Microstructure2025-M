@@ -49,7 +49,8 @@ This repository contains a collection of scripts developed by Team Microstructur
  # Takes no arguments
  ./run_pipeline.sh
  ```
- [!Note] Make sure all scripts are executable before running
+ > [!Note]
+ > Make sure all scripts are executable before running
  ```bash
  chmod +x *.sh
  ```

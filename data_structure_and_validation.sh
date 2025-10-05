@@ -2,12 +2,12 @@
 
 # Usage:
 # Set environment variables by exporting them before running the script:
-#   export MICROSTRUCTURE_M=/path/to/project
+#   export PROJECT_ROOT=/path/to/project/root
 #   export ORIG_DATA=/path/to/orig_or_zip_parent
 #   ./data_structure_and_validation.sh
 
 # Or inline when running the script:
-# MICROSTRUCTURE_M=/path/to/project ORIG_DATA=/path/to/orig_or_zip_parent ./data_structure_and_validation.sh
+# PROJECT_ROOT=/path/to/project ORIG_DATA=/path/to/orig_or_zip_parent ./data_structure_and_validation.sh
 
 set -euo pipefail
 IFS=$'\n\t'
@@ -18,7 +18,7 @@ print_red()   { echo -e "==> \033[1;31m$1\033[0m"; }
 print_yellow(){ echo -e "==> \033[1;33m$1\033[0m"; }
 
 # --- Config ---
-: "${MICROSTRUCTURE_M:?"Please set MICROSTRUCTURE_M (project root)"}"
+: "${PROJECT_ROOT:?"Please set PROJECT_ROOT (project root)"}"
 : "${ORIG_DATA:?"Please set ORIG_DATA (original data path)"}"
 
 SOURCE="source"
@@ -27,18 +27,18 @@ DERIVATIVES="derivatives"
 CODE="code"
 REQ_BIDSCOIN_VER="4.6.2"
 
-SUB_LIST="${MICROSTRUCTURE_M}/sub_list"
+SUB_LIST="${PROJECT_ROOT}/sub_list"
 
 # --- Functions ---
 create_dirs() {
     print_green "Creating project directories"
-    mkdir -p "$MICROSTRUCTURE_M"/{$SOURCE,$RAW,$DERIVATIVES}
+    mkdir -p "$PROJECT_ROOT"/{$SOURCE,$RAW,$DERIVATIVES}
 }
 
 populate_source() {
     print_green "Populating source from $ORIG_DATA"
-    mkdir -p "$MICROSTRUCTURE_M/$SOURCE"
-    pushd "$MICROSTRUCTURE_M/$SOURCE" >/dev/null
+    mkdir -p "$PROJECT_ROOT/$SOURCE"
+    pushd "$PROJECT_ROOT/$SOURCE" >/dev/null
 
     if [ -f "$ORIG_DATA" ] && [[ "$ORIG_DATA" == *.zip ]]; then
         unzip -o "$ORIG_DATA"
@@ -61,7 +61,7 @@ populate_source() {
         cat "$SUB_LIST"
     else
         print_yellow "Subjects found in source:"
-        find "$MICROSTRUCTURE_M/$SOURCE" -maxdepth 2 -type d -name "sub-*" || true
+        find "$PROJECT_ROOT/$SOURCE" -maxdepth 2 -type d -name "sub-*" || true
     fi
 }
 
@@ -82,8 +82,8 @@ load_bidscoin() {
 }
 
 run_bidsmapper() {
-    local src="$MICROSTRUCTURE_M/$SOURCE"
-    local raw="$MICROSTRUCTURE_M/$RAW"
+    local src="$PROJECT_ROOT/$SOURCE"
+    local raw="$PROJECT_ROOT/$RAW"
     mkdir -p "$raw/$CODE/bidscoin"
 
     if command -v bidsmapper >/dev/null; then
@@ -95,8 +95,8 @@ run_bidsmapper() {
 }
 
 run_bidscoiner() {
-    local src="$MICROSTRUCTURE_M/$SOURCE"
-    local raw="$MICROSTRUCTURE_M/$RAW"
+    local src="$PROJECT_ROOT/$SOURCE"
+    local raw="$PROJECT_ROOT/$RAW"
 
     if command -v bidscoiner >/dev/null; then
         print_green "Running bidscoiner"
@@ -107,8 +107,8 @@ run_bidscoiner() {
 }
 
 copy_existing_dwi() {
-    local src="$MICROSTRUCTURE_M/$SOURCE"
-    local raw="$MICROSTRUCTURE_M/$RAW"
+    local src="$PROJECT_ROOT/$SOURCE"
+    local raw="$PROJECT_ROOT/$RAW"
 
     print_green "Copying pre-converted DWI files"
 
@@ -163,7 +163,7 @@ copy_existing_dwi() {
 
 
 add_bidsignore() {
-    local raw="$MICROSTRUCTURE_M/$RAW"
+    local raw="$PROJECT_ROOT/$RAW"
     cat > "$raw/.bidsignore" <<EOF
 raw/${CODE}/
 raw/README
@@ -173,7 +173,7 @@ EOF
 }
 
 write_dataset_description() {
-    local raw="$MICROSTRUCTURE_M/$RAW"
+    local raw="$PROJECT_ROOT/$RAW"
     cat > "$raw/dataset_description.json" <<EOF
 {
   "Name": "Microstructure-M Pipeline Dataset",
@@ -184,7 +184,7 @@ EOF
 }
 
 run_bids_validator() {
-    local raw="$MICROSTRUCTURE_M/$RAW"
+    local raw="$PROJECT_ROOT/$RAW"
     if command -v deno >/dev/null; then
         print_green "Running BIDS validator (ignoring warnings, verbose mode)"
         deno run -ERWN jsr:@bids/validator "$raw" --ignoreWarnings --verbose || print_yellow "Validator issues found"
@@ -194,7 +194,7 @@ run_bids_validator() {
 }
 
 show_tree() {
-    local raw="$MICROSTRUCTURE_M/$RAW"
+    local raw="$PROJECT_ROOT/$RAW"
     if command -v tree >/dev/null; then
         tree -L 4 "$raw"
     else

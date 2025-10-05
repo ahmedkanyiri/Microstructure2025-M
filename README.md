@@ -10,8 +10,42 @@ This repository contains a collection of scripts developed by Team Microstructur
 
 -**Analysis** [ *Analysis.sh* ]: Executes TBSS analysis to assess changes in white matter microstructural integrity in subjects with Alzheimer’s dementia.
 
+-**Combined** [ *run_pipeline.sh* ]: Executes the whole pipeline
+
 ## Sripts Usage
-- There are two ways to use the scripts, first run the scripts individually, or run them all together using run_pipeline.sh. Either method you choose you must create two environment variables in the bash terminal `MICROSTRUCTURE_M` and `ORIG_DATA`
+- There are two ways to use the scripts, first run the scripts individually, or run them all together using run_pipeline.sh. Either method you choose you must create two environment variables in the bash terminal
+- `PROJECT_ROOT` -> Root folder name
+-  `ORIG_DATA`   -> Original dataset archive
+
+```bash
+$ export PROJECT_ROOT=/home/joyvan/Microstructure_M
+$ export ORIG_DATA=/home/joyvan/path/to/archive
+```
+=> Individual scripts method
+You have to run the scripts in this order
+```bash
+# creates data structure and  and validate it using the bids-validator, takes no argument
+$ ./data_structure_and_validation.sh
+ ```
+```bash
+# runs quality control, takes 2 positonal arguments - raw and derivatives directories
+$ ./Mriqc.sh path/to/raw path/to/derivatives
+ ```
+
+```bash
+# runs preprocessing, takes 2 positonal arguments - raw and derivatives directories
+$ ./Preprocessing.sh path/to/raw path/to/derivatives
+ ```
+
+```bash
+# runs Anylysis, takes 1 argument - derivatives directory
+$ ./Analysis.sh path/to/derivatives
+ ```
+
+=> Combined Method
+```bash
+# Runs all the scripts listed above, takes no arguments
+$ ./run_pipeline.sh
 
 ## Team Details
 

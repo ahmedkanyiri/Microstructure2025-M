@@ -13,39 +13,50 @@ This repository contains a collection of scripts developed by Team Microstructur
 -**Combined** [ *run_pipeline.sh* ]: Executes the whole pipeline
 
 ## Sripts Usage
-- There are two ways to use the scripts, first run the scripts individually, or run them all together using run_pipeline.sh. Either method you choose you must create two environment variables in the bash terminal
-- `PROJECT_ROOT` -> Root folder name
--  `ORIG_DATA`   -> Original dataset archive
+- There are two ways to use the scripts, first run the scripts individually, or run them all together using run_pipeline.sh. Before using either method, create the following environment variables in your bash terminal
+ -- `PROJECT_ROOT` -> Root folder name
+ --  `ORIG_DATA`   -> Original dataset archive
 
 ```bash
 $ export PROJECT_ROOT=/home/joyvan/Microstructure_M
 $ export ORIG_DATA=/home/joyvan/path/to/archive
 ```
-=> Individual scripts method
+- ### Individual scripts method
 You have to run the scripts in this order
 ```bash
-# creates data structure and  and validate it using the bids-validator, takes no argument
-$ ./data_structure_and_validation.sh
- ```
+# Step 1: Create the data structure and validate it using the BIDS validator
+# Takes no arguments
+./data_structure_and_validation.sh
+```
+
 ```bash
-# runs quality control, takes 2 positonal arguments - raw and derivatives directories
-$ ./Mriqc.sh path/to/raw path/to/derivatives
+# Step 2: Run MRIQC for quality control
+# Takes 2 positional arguments: raw and derivatives directories
+./Mriqc.sh path/to/raw path/to/derivatives
  ```
 
 ```bash
-# runs preprocessing, takes 2 positonal arguments - raw and derivatives directories
-$ ./Preprocessing.sh path/to/raw path/to/derivatives
+# Step 3: Run preprocessing
+# Takes 2 positional arguments: raw and derivatives directories
+./Preprocessing.sh path/to/raw path/to/derivatives
  ```
 
 ```bash
-# runs Anylysis, takes 1 argument - derivatives directory
-$ ./Analysis.sh path/to/derivatives
+# Step 4: Run analysis
+# Takes 1 positional argument: derivatives directory
+./Analysis.sh path/to/derivatives
  ```
 
-=> Combined Method
+### Combined Method
 ```bash
-# Runs all the scripts listed above, takes no arguments
-$ ./run_pipeline.sh
+# Runs all the steps listed above
+# Takes no arguments
+./run_pipeline.sh
+```
+-- Note, make sure all scripts are executable before running
+```bash
+chmod +x *.sh
+```
 
 ## Team Details
 

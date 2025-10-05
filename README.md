@@ -10,6 +10,9 @@ This repository contains a collection of scripts developed by Team Microstructur
 
 -**Analysis** [ *Analysis.sh* ]: Executes TBSS analysis to assess changes in white matter microstructural integrity in subjects with Alzheimer’s dementia.
 
+## Sripts Usage
+- There are two ways to use the scripts, first run the scripts individually, or run them all together using run_pipeline.sh. Either method you choose you must create two environment variables in the bash terminal `MICROSTRUCTURE_M` and `ORIG_DATA`
+
 ## Team Details
 
 ### Team Lead:

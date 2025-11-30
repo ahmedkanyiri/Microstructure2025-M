@@ -7,7 +7,7 @@ print_yellow() {
 
 print_yellow "Starting Pipeline"
 
-chmod *.sh
+chmod +x *.sh
 
 raw_dir="$PROJECT_ROOT"/raw
 deriv_dir="$PROJECT_ROOT"/derivatives

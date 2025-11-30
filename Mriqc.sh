@@ -82,7 +82,13 @@ create_qc_log() {
 echo "===== MRIQC QC Pipeline Started ====="
 
 create_qc_dir
-load_mriqc
+
+if [[ "$GOOGLE_COLAB" == "True" ]]; then
+    echo "Running in Google Colab"
+else
+    load_mriqc
+fi
+
 run_mriqc_participant
 manual_qc_reminder
 create_qc_log

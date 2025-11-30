@@ -7,10 +7,7 @@ print_yellow() {
 
 print_yellow "Starting Pipeline"
 
-chmod +x data_structure_and_validation.sh
-chmod +x Mriqc.sh
-chmod +x Preprocessing.sh
-chmod +x Analysis.sh
+chmod *.sh
 
 raw_dir="$PROJECT_ROOT"/raw
 deriv_dir="$PROJECT_ROOT"/derivatives

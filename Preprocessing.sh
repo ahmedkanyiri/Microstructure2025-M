@@ -16,6 +16,10 @@ set -euo pipefail
 ml mrtrix3/3.0.4
 ml fsl/6.0.7.16
 
+print_green() { echo -e "==> \033[1;32m$1\033[0m"; }
+print_red()   { echo -e "==> \033[1;31m$1\033[0m"; }
+print_yellow(){ echo -e "==> \033[1;33m$1\033[0m"; }
+
 raw_dir="$1"
 deriv_dir="$2"
 
@@ -79,6 +83,14 @@ run_eddy_cpu_ap_with_topup() {
   topup_prefix="$5"
   outpref="$6"
 
+  if [[ "GOOGLE_COLAB"=="True" ]]; then 
+    eddy="eddy"
+    print_green "running eddy on AP-only using TOPUP results (With GPU support)"
+  else
+    eddy="eddy_cpu"
+    print_green "running eddy_cpu on AP-only using TOPUP results"
+  fi
+
   # Get number of volumes
   N_AP=$(fslval "$degibbs_ap" dim4 | tr -d '[:space:]')
 
@@ -88,8 +100,7 @@ run_eddy_cpu_ap_with_topup() {
 
   printf "0 1 0 0.05\n" > "$subj_fsl_dir/acqparams.txt"
 
-  echo "    running eddy_cpu on AP-only using TOPUP results"
-  eddy_cpu \
+  $eddy \
     --imain="$degibbs_ap" \
     --mask="${subj_fsl_dir}/hifi_nodif_brain_mask.nii.gz" \
     --acqp="$subj_fsl_dir/acqparams.txt" \

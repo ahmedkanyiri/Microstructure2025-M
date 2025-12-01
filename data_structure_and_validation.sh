@@ -87,7 +87,7 @@ run_bidsmapper() {
     mkdir -p "$raw/$CODE/bidscoin"
 
     if [["$GOOGLE_COLAB" == "True"]]; then
-        auto="-a
+        auto="-a"
     else 
         auto=""
     fi 

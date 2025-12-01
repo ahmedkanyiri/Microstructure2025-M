@@ -86,7 +86,7 @@ run_bidsmapper() {
     local raw="$PROJECT_ROOT/$RAW"
     mkdir -p "$raw/$CODE/bidscoin"
 
-    if [["$GOOGLE_COLAB" = "True"]] then;
+    if [["$GOOGLE_COLAB" == "True"]]; then
         auto="-a
     else 
         auto=""

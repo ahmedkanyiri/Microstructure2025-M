@@ -13,8 +13,10 @@
 set -euo pipefail
 
 # Load modules 
-ml mrtrix3/3.0.4
-ml fsl/6.0.7.16
+if [[ "$GOOGLE_COLAB" != "True" ]]; then 
+  module load fsl/6.0.4
+  module load mrtrix3/3.0.2
+fi
 
 print_green() { echo -e "==> \033[1;32m$1\033[0m"; }
 print_red()   { echo -e "==> \033[1;31m$1\033[0m"; }
@@ -83,7 +85,7 @@ run_eddy_cpu_ap_with_topup() {
   topup_prefix="$5"
   outpref="$6"
 
-  if [[ "GOOGLE_COLAB"=="True" ]]; then 
+  if [[ "$GOOGLE_COLAB"=="True" ]]; then 
     eddy="eddy"
     print_green "running eddy on AP-only using TOPUP results (With GPU support)"
   else

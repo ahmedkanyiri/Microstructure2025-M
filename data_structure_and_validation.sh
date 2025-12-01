@@ -125,6 +125,7 @@ copy_existing_dwi() {
     fi
 
     for subj in $subjects; do
+        echo "Processing subject: $subj"
         subjdir="$raw/$subj"
         [ -d "$subjdir" ] || continue
 

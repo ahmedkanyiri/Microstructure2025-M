@@ -86,9 +86,15 @@ run_bidsmapper() {
     local raw="$PROJECT_ROOT/$RAW"
     mkdir -p "$raw/$CODE/bidscoin"
 
+    if [["$GOOGLE_COLAB" = "True"]] then;
+        auto="-a
+    else 
+        auto=""
+    fi 
+
     if command -v bidsmapper >/dev/null; then
         print_green "Running bidsmapper"
-        bidsmapper "$src" "$raw" || print_yellow "bidsmapper failed"
+        bidsmapper "$src" "$raw" "$auto" || print_yellow "bidsmapper failed"
     else
         print_yellow "bidsmapper not found"
     fi

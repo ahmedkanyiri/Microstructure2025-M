@@ -122,10 +122,11 @@ copy_existing_dwi() {
         subjects=$(cat "$SUB_LIST")
     else
         subjects=$(find "$raw" -maxdepth 1 -type d -name "sub-*" -print0 2>/dev/null | xargs -0 -n1 basename || true)
+        print_yellow "Subjects found: $subjects"
     fi
 
     for subj in $subjects; do
-        echo "Processing subject: $subj"
+        print_yellow "Processing subject: $subj"
         subjdir="$raw/$subj"
         [ -d "$subjdir" ] || continue
 
